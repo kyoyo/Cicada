@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>用户登录</title>
+    <link type="text/css" href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <style>#register{
+ width:500px;
+ margin:200px auto;
+}
+</style>
+  </head>
+  <body>
+    <div id="register">
+      <form method="post" action="">
+        <table>{{form.as_table}}
+
+          <tr>
+            <th>{% csrf_token %}
+              <input type="hidden" name="next" value="/">
+            </th>
+            <td>
+              <input type="submit" value="注册" class="btn btn-primary">
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </body>
+</html><form method="post" action=""> 
+</form>

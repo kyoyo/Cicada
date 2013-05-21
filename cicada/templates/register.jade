@@ -1,0 +1,23 @@
+!!!5
+html
+	head
+		meta(charset='utf-8')
+		title 用户注册
+		link(type='text/css',href="/static/css/bootstrap.min.css",rel='stylesheet')
+		style
+			#register{
+				width:500px;
+				margin:200px auto;
+			}
+	body
+		div#register
+			form(method="post",action="")
+				table
+					{{form.as_table}}
+					tr
+						th {% csrf_token %}
+							input(type='hidden',name='next',value='/')
+						td
+							input.btn.btn-primary(type='submit',value='注册')
+<form method="post" action=""> 
+</form>

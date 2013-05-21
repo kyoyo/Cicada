@@ -1,11 +1,34 @@
-# Create your views here.
-from django.http import HttpRequest,HttpResponse
-from django.shortcuts import render_to_response
+#encoding:utf-8
 import json
+
+from django.http import HttpRequest,HttpResponse,HttpResponseRedirect
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+
 from cicada.models import *
+# 用户id
+# print request.session['_auth_user_id']
+# request.session['username'] = request.user.username
 
 def index(request):
-	return render_to_response('index.html',{"test":"test"})
+	print request.META['REMOTE_ADDR']
+	return render_to_response('index.html',{"test":"test","request":request})
+
+#用户注册
+def register(request):
+	if request.user.is_authenticated():
+		return HttpResponseRedirect("/")
+
+	from django.contrib.auth.forms import *
+	form = UserCreationForm()
+	if request.method == 'GET':
+		return render_to_response('register.html',{'form':form},context_instance=RequestContext(request))
+	if request.method == 'POST':
+		form = UserCreationForm(request.POST)
+    	if form.is_valid():
+        		new_user = form.save()
+        		return HttpResponseRedirect("/")
+        return HttpResponse("请输入正确的信息！")
 
 def topic_suggest(request):
 	result = []

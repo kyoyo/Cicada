@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>首页</title>
-    <link type="text/css" href="static/css/bootstrap.min.css" rel="stylesheet">
-    <link type="text/css" href="static/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <link type="text/css" href="static/css/jquery.tagsinput.css" rel="stylesheet">
-    <link type="text/css" href="static/css/jquery.autocomplete.css" rel="stylesheet">
-    <link type="text/css" href="static/css/index.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/jquery.tagsinput.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/jquery.autocomplete.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/index.css" rel="stylesheet">
   </head>
   <body>
     <div id="top">
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div id="head">
-        <div id="logo"><a href="index.html"><img src="static/images/logo.png"></a>
+        <div id="logo"><a href="/"><img src="static/images/logo.png"></a>
         </div>
         <div class="navbar">
           <ul class="nav">
@@ -68,7 +68,7 @@
           </form>
         </div>
         <div class="login-status">
-          <div class="account"><img src="static/images/no_avatar.jpg"><span>希望之石</span>
+          <div class="account"><img src="static/images/no_avatar.jpg"><span>{{ request.user.nickname }}</span>
           </div>
           <ul class="acc-func hide">
             <li><a href="#"><i class="icon icon-white icon-user"></i>我的主页
@@ -80,7 +80,7 @@
             <li><a href="#"><i class="icon icon-white icon-cog"></i>设置
 </a>
             </li>
-            <li><a href="#"><i class="icon icon-white icon-off"></i>退出
+            <li><a href="/auth/logout"><i class="icon icon-white icon-off"></i>退出
 </a>
             </li>
           </ul>
