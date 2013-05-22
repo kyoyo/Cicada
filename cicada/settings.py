@@ -118,7 +118,7 @@ TEMPLATE_DIRS = (
 )
 # print ROOT_PATH+'/'+'templates/'
 INSTALLED_APPS = (
-    'django.contrib.auth',
+    'contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',

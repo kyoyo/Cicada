@@ -56,7 +56,12 @@ $('a.post-ques-btn').click(function(){
 	$.post('/question_save/',
 		{"title":title,"desc":desc,"topic":topic},
 		function(data){
-			alert(data)
+			// alert(data)
+			if(data.islogin==false){
+				alert("请登录后操作!!!")
+				return false
+			}
+			alert(data.islogin)
 		},"json"
 	)
 	return false

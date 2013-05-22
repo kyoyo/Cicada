@@ -7,7 +7,7 @@ except ImportError:     # Python 2
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, QueryDict
+from django.http import HttpResponseRedirect,HttpResponse, QueryDict
 from django.template.response import TemplateResponse
 from django.utils.http import base36_to_int, is_safe_url
 from django.utils.translation import ugettext as _
@@ -115,7 +115,7 @@ def logout_then_login(request, login_url=None, current_app=None, extra_context=N
 
 
 def redirect_to_login(next, login_url=None,
-                      redirect_field_name=REDIRECT_FIELD_NAME):
+                      redirect_field_name=REDIRECT_FIELD_NAME,isajax=False):
     """
     Redirects the user to the login page, passing the given 'next' page
     """
@@ -126,7 +126,8 @@ def redirect_to_login(next, login_url=None,
         querystring = QueryDict(login_url_parts[4], mutable=True)
         querystring[redirect_field_name] = next
         login_url_parts[4] = querystring.urlencode(safe='/')
-
+    if isajax :
+	return HttpResponse('{"islogin":false,"errmsg":"please login"}')
     return HttpResponseRedirect(urlunparse(login_url_parts))
 
 

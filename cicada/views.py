@@ -4,14 +4,20 @@ import json
 from django.http import HttpRequest,HttpResponse,HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+
 
 from cicada.models import *
 # 用户id
 # print request.session['_auth_user_id']
 # request.session['username'] = request.user.username
 
+def user_auth(request):
+	if not request.user.is_authenticated():
+		return HttpResponseRedirect("/auth/login")
+
+# @login_required(login_url='/auth/login')
 def index(request):
-	print request.META['REMOTE_ADDR']
 	return render_to_response('index.html',{"test":"test","request":request})
 
 #用户注册
@@ -38,10 +44,10 @@ def topic_suggest(request):
 
 	return HttpResponse(json.dumps(result),content_type="application/json")
 
+@login_required(login_url='/auth/login')
 def question_save(request):
-	result = {"success":True,"error":""}
+	result = {"islogin":True,"success":True,"errmsg":""}
 	if request.method == 'POST':
-
 		# 1.数据验证（去除Html标签）
 		# 2.判断topic是否存在
 		# 3.如果topic不存在则添加topic
@@ -50,6 +56,6 @@ def question_save(request):
 		
 		tp = Topic()
 		tp.topic_name = request.POST['title']
-		if Topic.objects.
 		print request.POST
+		# if Topic.objects.
 		return HttpResponse(json.dumps(result))
