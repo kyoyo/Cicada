@@ -26,7 +26,7 @@
 .question-form .q-header label{
 	float: left;
 }
-.question-form .qdesc-text div{
+.question-form .qdesc-text .ques-desc{
 	min-height: 66px;
 }
 .question-form .q-header .tips{

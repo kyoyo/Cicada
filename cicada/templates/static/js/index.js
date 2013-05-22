@@ -32,15 +32,15 @@ $('.post-ques').click(function(){
 });
 $('#tags').tagsInput({
 	"autocomplete_url":"/topic_suggest",
-	"autocomplete":{"selectFirst":true,"width":"100px","autoFill":true,select:function (event, ui) {
-		// old = $('#tags').val()
-		// old=''
-		// $('#tags').val(old+','+ui.item.id)
-	}},
+	"autocomplete":{"selectFirst":true,"width":"100px","autoFill":true},
 	"height":"auto",
 	"width":"510px",
 	"defaultText":"搜索话题",
 });
+$('a.post-ques-cancel').click(function(){
+	$('.post-ques-dialog').modal('hide')
+	return false
+})
 $('a.post-ques-btn').click(function(){
 	var title = $('div.question-form .ques-title').text(),
 		desc = $('div.question-form .ques-desc').text(),
@@ -56,12 +56,14 @@ $('a.post-ques-btn').click(function(){
 	$.post('/question_save/',
 		{"title":title,"desc":desc,"topic":topic},
 		function(data){
-			// alert(data)
 			if(data.islogin==false){
 				alert("请登录后操作!!!")
 				return false
 			}
-			alert(data.islogin)
+			if(data.success){
+				alert("发表问题成功。")
+				$('.post-ques-dialog').modal("hide")
+			}
 		},"json"
 	)
 	return false

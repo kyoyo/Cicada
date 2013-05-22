@@ -24,7 +24,9 @@ urlpatterns = patterns('',
     (r'^auth/logout/$', 'django.contrib.auth.views.logout',{"next_page":"/auth/login"}),
     url(r'^auth/register/$',views.register),
     url(r'^topic_suggest/$',views.topic_suggest),
+    (r'^question/(\d+)$',views.question),
     url(r'^question_save/$',views.question_save),
+    (r'^profile/(\w*)$',views.profile),
     
 )
 #后台管理

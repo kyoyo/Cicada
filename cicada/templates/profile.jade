@@ -1,0 +1,12 @@
+!!!5
+html
+	head
+		title {{request.user.nickname}}-个人中心
+	body
+		div.avatar
+			form(method="post",action="",enctype="multipart/form-data")
+				//- img(src="")
+				//- a(href="#") 更改头像
+				input(type="file",name="avatar")
+				input(type="submit",value="upload")
+		div 

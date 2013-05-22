@@ -1,6 +1,6 @@
 #encoding:utf-8
 from django.db import models
-from django.contrib.auth.models import User
+# from contrib.auth.models import User
 
 class Topic_category(models.Model):
 	category_name = models.CharField(max_length=45)
@@ -8,20 +8,25 @@ class Topic_category(models.Model):
 
 class TopicManager(models.Manager):
 
-	def addTopic(self):
-		self.save()
-		return self.id
-
-	def checkExist(self,name):
-		return bool(self.filter(topic_name=name).count())
+	def getTopic(self,name):
+		try:
+			topic = self.filter(topic_name=name)[0]
+		except Exception:
+			topic = None
+		return topic
 
 class Topic(models.Model):
 	topic_name = models.CharField(max_length=45)
+	topic_desc = models.CharField(max_length=250,default='')
 	logo = models.CharField(max_length=145)
 	topic_category_id = models.IntegerField()
 	
 	objects = TopicManager()
 
+class QuestionManager(models.Manager):
+
+	def getQuestionById(self,qid):
+		return self.filter(id = qid)
 
 class Question(models.Model):
 	user_id = models.IntegerField()
@@ -29,3 +34,5 @@ class Question(models.Model):
 	desc = models.CharField(max_length=500)
 	created = models.DateTimeField(auto_now_add=True)
 	_has_topic = models.ManyToManyField(Topic)
+
+	objects = QuestionManager()
