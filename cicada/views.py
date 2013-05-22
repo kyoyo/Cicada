@@ -50,5 +50,6 @@ def question_save(request):
 		
 		tp = Topic()
 		tp.topic_name = request.POST['title']
+		if Topic.objects.
 		print request.POST
 		return HttpResponse(json.dumps(result))
