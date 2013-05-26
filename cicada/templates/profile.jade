@@ -7,6 +7,12 @@ html
 			form(method="post",action="",enctype="multipart/form-data")
 				//- img(src="")
 				//- a(href="#") 更改头像
-				input(type="file",name="avatar")
-				input(type="submit",value="upload")
-		div 
+				input#file(type="file",name="avatar")
+		<link rel="stylesheet" type="text/css" href="/static/plugins/uploadify/uploadify.css" />
+		script(type='text/javascript',src='/static/js/jquery-1.7.2.min.js')
+		script(type='text/javascript',src='/static/plugins/uploadify/jquery.uploadify.min.js')
+		script
+			$('#file').uploadify({
+				"swf":"/static/plugins/uploadify/uploadify.swf",
+				'uploader' : '/profile/'
+				})

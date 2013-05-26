@@ -1,6 +1,6 @@
 #encoding:utf-8
 from django.db import models
-# from contrib.auth.models import User
+from contrib.auth.models import User
 
 class Topic_category(models.Model):
 	category_name = models.CharField(max_length=45)
@@ -36,3 +36,11 @@ class Question(models.Model):
 	_has_topic = models.ManyToManyField(Topic)
 
 	objects = QuestionManager()
+
+class Answer(models.Model):
+	content = models.TextField()
+	user = models.ForeignKey(User, on_delete = models.DO_NOTHING)
+	question = models.ForeignKey(Question)
+	created = models.DateTimeField(auto_now_add=True)
+	vote_yes = models.PositiveSmallIntegerField(default=0)
+	vote_no = models.PositiveSmallIntegerField(default=0)

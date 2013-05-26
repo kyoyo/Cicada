@@ -1,0 +1,89 @@
+!!!5
+html
+	head
+		meta(charset='utf-8')
+		title 首页
+		link(type='text/css',href="/static/css/bootstrap.min.css",rel='stylesheet')
+		link(type='text/css',href="/static/css/bootstrap-responsive.min.css",rel='stylesheet')
+		link(type='text/css',href="/static/css/common.css",rel='stylesheet')
+		style
+			#subnav_bg{
+				display:none;
+			}
+			#error{
+				background-color:#CCC;
+				padding:6px;
+				width:400px;
+				/*min-height:155px;*/
+				margin:0px auto;
+				border-radius:4px;
+			}
+			#title{
+				background-color:#900;
+				height:30px;
+				line-height:30px;
+				font-weight:bold;
+				font-size:13px;
+				color:#FFF;
+				opacity:0.7;
+				text-align:center;
+				border-top-left-radius: 4px;
+				border-top-right-radius: 4px;
+			}
+			#list{
+				background-color:#FFF;
+				padding:10px 0px 6px 10px;
+				color:#900;
+				border-bottom: 1px solid #CCF;
+			}
+			#back{
+				background-color:#FFF;
+				height: 30px;
+				line-height: 30px;
+				text-align: center;
+				color: #555;
+				font-size: 13px;
+			}
+			#back a{
+				color:#900;
+				padding:0px 3px;
+			}
+			#back span{
+				color:#f00;
+				padding:0px 3px;
+			}
+		script
+				{% if url%}
+					var url = "window.location.href='{{url}}'"
+				{% else %}
+					var url = "history.go(-1)"				
+				{% endif %}
+	body
+		{% include "base.html" %}
+		div#content
+			div#error
+				div#title 操作失败
+				div#list
+					ul
+						{% for n in msg %}
+						li {{n}}
+						{% endfor %}
+				div#back
+					span#time {{time}}
+					秒钟后将进行
+					a(href='javascript:url') 跳转
+					，也可以
+					a(href='/') 返回首页
+		script
+			window.setTimeout(url,{{time}}*1000);
+			var _w=document.documentElement.clientWidth,
+			_h=document.documentElement.clientHeight,
+			_time=document.getElementById("time").innerHTML;
+			document.body.style.cssText="width:"+_w+'px;height:'+_h+'px';
+			function revTime(){
+				_time--;
+				if(_time>0){
+					document.getElementById("time").innerHTML=_time;
+				}
+			}
+			setInterval("revTime()",1000);

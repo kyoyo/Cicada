@@ -1,10 +1,91 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>{{qinfo.title}}-知乎，最具人气的在线问答平台</title>
+    <link type="text/css" href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/common.css" rel="stylesheet">
+    <link type="text/css" href="/static/css/question.css" rel="stylesheet">
   </head>
-  <body>
-    <div>{{qinfo.title}}</div>
-    <div>{{qinfo.desc|safe}}</div>
+  <body>{% include "base.html" %}
+
+    <div id="content">
+      <div id="content-left">
+        <div id="question">
+          <div class="qinfo-topic">
+            <div class="topic-label">{% for n in qtopic %}
+<a href="/topic/{{n.id}}">{{n.topic_name}}</a>{% endfor %}
+
+            </div><a class="edit-btn"><i class="icon icon-pencil"></i>修改
+</a>
+          </div>
+          <div class="qinfo-title">
+            <h2>{{qinfo.title}}</h2><a class="edit-btn"><i class="icon icon-pencil"></i>修改
+</a>
+          </div>
+          <div class="qinfo-desc">{{qinfo.desc|safe}}<a class="edit-btn"><i class="icon icon-pencil"></i>修改
+</a>
+          </div>
+          <div class="comment-bar"><a href="#">2012-11-22</a><a href="#"><i class="icon icon-file"></i>{{qinfo.id}} 条评论 
+</a><a href="#" class="hide"><i class="icon icon-heart"></i>感谢
+</a><a href="#" class="hide"><i class="icon icon-share"></i>分享 
+</a><a href="#" class="hide"><i class="icon icon-bookmark"></i>收藏
+</a>
+          </div>
+        </div>
+        <div class="answer-total">
+          <h3>{{answer|length}} 个回答</h3>
+          <div class="drop-menu">
+            <p class="one"><a><span>按票数排序</span><i class="icon icon-repeat"></i></a>
+            </p>
+            <p class="hide"><a>按时间排序</a>
+            </p>
+          </div>
+        </div>
+        <div class="answer-list">{% for n in answer %}
+
+          <div aid="{{n.id}}" class="item">
+            <div class="item-vote"><a href="#" title="赞同" class="agree"><i class="icon icon-thumbs-up"></i></a><a href="#" title="反对，不会显示你的姓名" class="oppose"><i class="icon icon-thumbs-down"></i></a>
+            </div>
+            <div class="item-user"><a href="#" class="user">{{n.user.nickname}}</a><span>，这是我的个性签名</span><a href="#" class="avatar"><img src="/static/images/my_avatar.jpg"></a>
+            </div>{% if n.vote_yes %}
+
+            <div class="item-vote-info">{{n.vote_yes}} 票，来自<span class="voters">{% for u in n.answers %}
+<a href="/profile/{{u.username}}">{{u.nickname}}</a>{% endfor %}
+</span>
+            </div>{% endif %}
+
+            <div class="answer-con">{{n.content|safe}}</div>
+            <div class="comment-bar"><a href="#">{{n.created|date:"Y-m-d"}}</a><a href="#"><i class="icon icon-file"></i>{{qinfo.id}} 条评论
+</a><a href="#" class="hide"><i class="icon icon-heart"></i>感谢
+</a><a href="#" class="hide"><i class="icon icon-share"></i>分享 
+</a><a href="#" class="hide"><i class="icon icon-bookmark"></i>收藏
+</a>
+            </div>
+          </div>{% empty %}
+还没有人回答该问题噢
+{% endfor %}
+
+          <div class="item-user"><a href="#" class="user">{{request.user.nickname}}</a><span>，这是我的个性签名</span><a href="#" class="avatar"><img src="/static/images/my_avatar.jpg"></a>
+          </div>
+        </div>
+        <form method="post" action="/answer_save/{{qinfo.id}}/#footer">
+          <div class="emit-editor"><textarea name="content" class="html-editor">{{errmsg.content.value}}</textarea>
+          </div>
+          <div class="commit-answer"><span class="error">{{errmsg.content.msg}}</span>
+            <button class="btn btn-primary">发布回答</button>
+            <label class="anonym">
+              <input type="checkbox">匿名
+
+            </label>
+          </div>
+        </form>
+      </div>
+      <div id="content-right"></div>{% include 'footer.html' %}
+
+    </div>
+    <script src="/static/plugins/xheditor/xheditor-1.1.14-zh-cn.js"></script>
+    <script src="/static/js/question.js"></script>
   </body>
 </html>

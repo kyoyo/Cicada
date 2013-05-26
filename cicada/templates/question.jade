@@ -1,7 +1,111 @@
 !!!5
 html
 	head
+		meta(charset='utf-8')
 		title {{qinfo.title}}-知乎，最具人气的在线问答平台
+		link(type='text/css',href="/static/css/bootstrap.min.css",rel='stylesheet')
+		link(type='text/css',href="/static/css/bootstrap-responsive.min.css",rel='stylesheet')
+		link(type='text/css',href="/static/css/common.css",rel='stylesheet')
+		link(type='text/css',href="/static/css/question.css",rel='stylesheet')
 	body
-		div {{qinfo.title}}
-		div {{qinfo.desc|safe}}
+		{% include "base.html" %}
+		div#content
+			#content-left
+				div#question
+					div.qinfo-topic
+						div.topic-label
+							{% for n in qtopic %}
+							a(href='/topic/{{n.id}}') {{n.topic_name}}
+							{% endfor %}
+						a.edit-btn
+							i.icon.icon-pencil
+							修改
+					div.qinfo-title
+						h2 {{qinfo.title}}
+						a.edit-btn
+							i.icon.icon-pencil
+							修改
+					div.qinfo-desc {{qinfo.desc|safe}}
+						a.edit-btn
+							i.icon.icon-pencil
+							修改
+					div.comment-bar
+						a(href='#') 2012-11-22
+						a(href='#')
+							i.icon.icon-file
+							{{qinfo.id}} 条评论 
+						a.hide(href='#')
+							i.icon.icon-heart
+							感谢
+						a.hide(href='#')
+							i.icon.icon-share
+							分享 
+						a.hide(href='#')
+							i.icon.icon-bookmark
+							收藏
+				div.answer-total
+					h3 {{answer|length}} 个回答
+					div.drop-menu
+						p.one
+							a
+								span 按票数排序
+								i.icon.icon-repeat
+						p.hide
+							a 按时间排序
+				div.answer-list
+					{% for n in answer %}
+					div.item(aid="{{n.id}}")
+						div.item-vote
+							a.agree(href='#',title='赞同')
+								i.icon.icon-thumbs-up
+							a.oppose(href='#',title='反对，不会显示你的姓名')
+								i.icon.icon-thumbs-down
+						div.item-user
+							a.user(href='#') {{n.user.nickname}}
+							span ，这是我的个性签名
+							a.avatar(href='#')
+								img(src='/static/images/my_avatar.jpg')
+						{% if n.vote_yes %}
+						div.item-vote-info {{n.vote_yes}} 票，来自
+							span.voters
+								{% for u in n.answers %}
+								a(href='/profile/{{u.username}}') {{u.nickname}}
+								{% endfor %}
+								//- 、
+						{% endif %}
+						div.answer-con {{n.content|safe}}
+						div.comment-bar
+							a(href='#') {{n.created|date:"Y-m-d"}}
+							a(href='#')
+								i.icon.icon-file
+								{{qinfo.id}} 条评论
+							a.hide(href='#')
+								i.icon.icon-heart
+								感谢
+							a.hide(href='#')
+								i.icon.icon-share
+								分享 
+							a.hide(href='#')
+								i.icon.icon-bookmark
+								收藏
+					{% empty %}
+					还没有人回答该问题噢
+					{% endfor %}
+					div.item-user
+						a.user(href='#') {{request.user.nickname}}
+						span ，这是我的个性签名
+						a.avatar(href='#')
+							img(src='/static/images/my_avatar.jpg')
+				form(method='post',action='/answer_save/{{qinfo.id}}/#footer')
+					div.emit-editor
+						textarea.html-editor(name="content") {{errmsg.content.value}}
+					div.commit-answer
+						span.error {{errmsg.content.msg}}
+						button.btn.btn-primary 发布回答
+						label.anonym
+							input(type='checkbox')
+							匿名
+			#content-right
+			{% include 'footer.html' %}
+		script(src='/static/plugins/xheditor/xheditor-1.1.14-zh-cn.js')
+		script(src='/static/js/question.js')

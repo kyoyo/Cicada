@@ -25,7 +25,9 @@ urlpatterns = patterns('',
     url(r'^auth/register/$',views.register),
     url(r'^topic_suggest/$',views.topic_suggest),
     (r'^question/(\d+)$',views.question),
-    url(r'^question_save/$',views.question_save),
+    (r'^topic/(\d+)/$',views.topic_page),
+    url(r'^answer_save/(\d+)/$',views.answer_save),
+    (r'^answer_vote/$',views.answer_vote),
     (r'^profile/(\w*)$',views.profile),
     
 )

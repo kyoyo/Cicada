@@ -1,18 +1,31 @@
 #encoding:utf-8
+# sys lib
 import json
 import hashlib
 import random
 
+# django lib
 from django.http import HttpRequest,HttpResponse,HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from contrib.auth.decorators import login_required
 
 from django.utils.html import strip_tags,escape
+from django.conf import settings
 
+# third lib
 import markdown
+import redis
 
+# project lib
 from cicada.models import *
+from contrib.auth.models import User
+
+
+redis_cache = redis.Redis(host='localhost', port=6379, db=0)
+
+def error(msg = [],time = 3, url = ''):
+	return render_to_response('error.html',{"msg":msg,"time":time,"url":url})
 
 # 用户id
 # print request.session['_auth_user_id']
@@ -45,13 +58,89 @@ def topic_suggest(request):
 		result.append({"label":n.topic_name,"value":n.topic_name})
 
 	return HttpResponse(json.dumps(result),content_type="application/json")
+# 话题页面
+def topic_page(request,tid):
+	return HttpResponse(tid)
+
+@login_required(login_url='/auth/login')
+def answer_vote(request):
+	""" 赞成/反对 回答 """
+
+	result = {"success":False}
+	if request.method == 'POST':
+		from django.db.models import F
+		answer_id = int(request.POST['answer_id'])
+		rkey = 'cacida.answer-%d-agree-uid' % answer_id
+		uid = request.user.id
+
+		def cancel_agree():
+			r = redis_cache.srem(rkey,uid)
+			if r :
+				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')-1)
+
+		# 赞成 -- 记录用户ID、更新数据库
+		if request.POST['type'] == 'agree':
+			r = redis_cache.sadd(rkey,uid)
+			if r :
+				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')+1)
+		# 取消赞成
+		elif request.POST['type'] == 'cancel-agree':
+			cancel_agree()
+		# 反对 --- 如果已经赞同了，取消赞同
+		elif request.POST['type'] == 'oppose':
+			cancel_agree()
+			affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')+1)
+
+		# 取消反对
+		elif request.POST['type'] == 'cancel-oppose':
+			affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')-1)
+		if affect_nums :
+			result['success'] = True
+	return HttpResponse(json.dumps(result))
+
+
+@login_required(login_url='/auth/login')
+def answer_save(request,qid):
+	if request.method=='POST':
+		answer = Answer()
+		user = User()
+		user.id =  request.user.id
+		answer.user = user
+		ques = Question()
+		ques.id = qid
+		answer.question = ques
+
+		#去除xss，留下受信任的标签和属性
+		content = request.POST['content'].strip()
+		if len(content) < 10 :
+			# return error(['回答内容至少需要10个字符!'])
+			errmsg = {'content':{'msg':'回答内容至少需要10个字符!','value':content}}
+			return question(request,qid,errmsg)
+		import XssClean
+		ser_tag = settings.VALID_TAGS
+		xss = XssClean.XssClean(valid_tags = ser_tag)
+		xss.feed(content)
+		answer.content = xss.clean_data
+		xss.close()
+		answer.save()
+		if answer.id:
+			return HttpResponseRedirect('/question/'+qid)
+	return HttpResponseRedirect('/question/'+qid)
 
 # 问题信息页
-def question(request,qid):
+def question(request,qid,errmsg = []):
 	qinfo = Question.objects.getQuestionById(qid)
+	qtopic = qinfo[0]._has_topic.all()
+	answer = Answer.objects.filter(question = qid).all()
+	# 查找 answer 的支持者
+	for n in answer:
+		rkey = 'cacida.answer-%d-agree-uid' % n.id
+		uid = map(int,redis_cache.smembers(rkey))
+		n.answers = User.objects.filter(id__in = uid).all()
+
 	if not qinfo:
 		return HttpResponseRedirect('/')
-	return render_to_response('question.html',{"qinfo":qinfo[0]})
+	return render_to_response('question.html',{"qinfo":qinfo[0],"qtopic":qtopic,"errmsg":errmsg,"answer":answer},context_instance=RequestContext(request))
 
 
 @login_required(login_url='/auth/login')
@@ -102,6 +191,7 @@ def question_save(request):
 		if ques.id:
 			result['success'] = True
 		return HttpResponse(json.dumps(result))
+	return HttpResponseRedirect('/')
 
 def handle_uploaded_file(f,user=''):
 	filename = hashlib.md5(''+user+str(random.randint(0,1000))).hexdigest()[:9]
@@ -117,8 +207,8 @@ def profile(request,user):
 		user = request.user.username
 
 	if request.method == 'POST':
-		print request.POST
-		# print request.FILES.items()
-		handle_uploaded_file(request.FILES['avatar'],user)
+		# handle_uploaded_file(request.FILES['avatar'],user)
+		handle_uploaded_file(request.FILES['Filedata'],user)
+		
 
 	return render_to_response('profile.html',{"request":request})

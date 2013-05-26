@@ -4,6 +4,9 @@ ROOT_PATH = os.path.dirname(__file__)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+VALID_TAGS = {"strong":[],"ol":[],"li":[],"ul":[],"u":[],"em":[],"img":["src","title"],"blockquote":[],"a":["href"],"p":[],"span":[]}
+
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -87,6 +90,17 @@ STATICFILES_FINDERS = (
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'g4f=iw%na5%#i92w7oead0yo(0rw(j%r9tgz#%*+(&55b2!26d'
+    
+TEMPLATE_CONTEXT_PROCESSORS = ( 
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+)
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (

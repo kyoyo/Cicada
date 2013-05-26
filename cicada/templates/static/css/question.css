@@ -1,0 +1,115 @@
+p{
+	margin: 0px;
+}
+#subnav_bg{
+	display: none;
+}
+#content-left,#content-right{
+	width: 610px;
+	float: left;
+	height: auto;
+	overflow: hidden;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+#content-left{
+	padding-left: 25px;
+}
+#content-right{
+	width: 280px;
+	float: right;
+	border: 1px #0f0 solid;
+	margin-left: 10px;
+}
+div.qinfo-title{
+	clear: both;
+}
+div.qinfo-title h2{
+	display: inline;
+	font-size: 18px;
+}
+div.answer-total{
+	border-bottom: 1px #eee solid;
+	position: relative;
+	height: 40px;
+}
+div.answer-total h3{
+	font-size: 16px;
+	display: inline-block;
+	float: left;
+	line-height: 40px;
+	margin: 0px;
+}
+div.answer-total .drop-menu{
+	float: right;
+	margin-right: 10px;
+	cursor: pointer;
+	padding: 4px;
+	margin-top: 5px;
+	position: absolute;
+	right: 10px;
+	background: #FFF;
+	border: 1px #FFF solid;
+	z-index: 34;
+}
+div.answer-total .drop-menu p.one{
+	padding-top: 3px;
+}
+div.answer-total a{
+	color: #999;
+}
+div.drop-menu.active p{
+	display: block;
+}
+div.drop-menu.active{
+	border: 1px #eee solid;
+}
+div.answer-list div.item{
+	position: relative;
+}
+div.answer-list .item-vote{
+	position: absolute;
+	left: -18px;
+	top: 10px;
+}
+div.answer-list .item-vote a{
+	display: block;
+}
+div.answer-list .item-user{
+	font-weight: bold;
+	font-size: 12px;
+	padding: 10px 0px 2px;
+}
+div.answer-list .item-user .user{
+	color: #259;
+}
+div.answer-list .item-user .avatar{
+	display: inline-block;
+	float: right;
+	margin-right: 5px;
+}
+div.answer-list .item-vote-info{
+	color: #999;
+	margin-bottom: 4px;
+}
+div.answer-list .item-vote-info a{
+	color: #999;
+}
+div.answer-list span.voters{
+	padding-left: 4px;
+}
+div.commit-answer{
+	margin-top: 10px;
+}
+div.commit-answer button{
+	float: right;
+}
+div.commit-answer label{
+	float: right;
+	line-height: 20px;
+	margin-right: 10px;
+	margin-top: 5px;
+}
+div.commit-answer label input{
+	margin: 0px 3px 0px 0px;
+}
