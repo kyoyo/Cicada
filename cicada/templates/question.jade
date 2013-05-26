@@ -56,20 +56,25 @@ html
 					{% for n in answer %}
 					div.item(aid="{{n.id}}")
 						div.item-vote
+							{% if n.agree %}
+							a.cancel-agree(href='#',title='取消赞同')
+								i.icon.icon-thumbs-up
+							{% else %}
 							a.agree(href='#',title='赞同')
 								i.icon.icon-thumbs-up
+							{% endif %}
 							a.oppose(href='#',title='反对，不会显示你的姓名')
 								i.icon.icon-thumbs-down
 						div.item-user
 							a.user(href='#') {{n.user.nickname}}
 							span ，这是我的个性签名
-							a.avatar(href='#')
+							a.avatar(href='/profile/{{n.user_id}}')
 								img(src='/static/images/my_avatar.jpg')
 						{% if n.vote_yes %}
 						div.item-vote-info {{n.vote_yes}} 票，来自
 							span.voters
 								{% for u in n.answers %}
-								a(href='/profile/{{u.username}}') {{u.nickname}}
+								a(href='/profile/{{u.id}}') {{u.nickname}}
 								{% endfor %}
 								//- 、
 						{% endif %}

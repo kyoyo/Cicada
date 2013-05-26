@@ -46,13 +46,16 @@
         <div class="answer-list">{% for n in answer %}
 
           <div aid="{{n.id}}" class="item">
-            <div class="item-vote"><a href="#" title="赞同" class="agree"><i class="icon icon-thumbs-up"></i></a><a href="#" title="反对，不会显示你的姓名" class="oppose"><i class="icon icon-thumbs-down"></i></a>
+            <div class="item-vote">{% if n.agree %}
+<a href="#" title="取消赞同" class="cancel-agree"><i class="icon icon-thumbs-up"></i></a>{% else %}
+<a href="#" title="赞同" class="agree"><i class="icon icon-thumbs-up"></i></a>{% endif %}
+<a href="#" title="反对，不会显示你的姓名" class="oppose"><i class="icon icon-thumbs-down"></i></a>
             </div>
-            <div class="item-user"><a href="#" class="user">{{n.user.nickname}}</a><span>，这是我的个性签名</span><a href="#" class="avatar"><img src="/static/images/my_avatar.jpg"></a>
+            <div class="item-user"><a href="#" class="user">{{n.user.nickname}}</a><span>，这是我的个性签名</span><a href="/profile/{{n.user_id}}" class="avatar"><img src="/static/images/my_avatar.jpg"></a>
             </div>{% if n.vote_yes %}
 
             <div class="item-vote-info">{{n.vote_yes}} 票，来自<span class="voters">{% for u in n.answers %}
-<a href="/profile/{{u.username}}">{{u.nickname}}</a>{% endfor %}
+<a href="/profile/{{u.id}}">{{u.nickname}}</a>{% endfor %}
 </span>
             </div>{% endif %}
 

@@ -56,7 +56,7 @@
       </form>
     </div>
     <div class="login-status">
-      <div class="account"><img src="/static/images/no_avatar.jpg"/><a href="/profile/{{ request.user.username }}">{{ request.user.nickname }}</a>
+      <div class="account"><img src="/static/images/no_avatar.jpg"/><a href="/profile/{{ request.user.id }}">{{ request.user.nickname }}</a>
       </div>
       <ul class="acc-func hide">
         <li><a href="#"><i class="icon icon-white icon-user"></i>我的主页

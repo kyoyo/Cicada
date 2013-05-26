@@ -69,11 +69,16 @@ div.answer-list div.item{
 }
 div.answer-list .item-vote{
 	position: absolute;
-	left: -18px;
+	left: -20px;
 	top: 10px;
 }
 div.answer-list .item-vote a{
 	display: block;
+	padding: 0px 2px;
+	border-radius: 3px;
+}
+div.answer-list .cancel-agree{
+	background: #49afcd;
 }
 div.answer-list .item-user{
 	font-weight: bold;

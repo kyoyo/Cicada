@@ -65,7 +65,6 @@ def topic_page(request,tid):
 @login_required(login_url='/auth/login')
 def answer_vote(request):
 	""" 赞成/反对 回答 """
-
 	result = {"success":False}
 	if request.method == 'POST':
 		from django.db.models import F
@@ -73,14 +72,17 @@ def answer_vote(request):
 		rkey = 'cacida.answer-%d-agree-uid' % answer_id
 		uid = request.user.id
 
+		import time
+		score = time.time()
+
 		def cancel_agree():
-			r = redis_cache.srem(rkey,uid)
+			r = redis_cache.zrem(rkey,uid)
 			if r :
 				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')-1)
 
 		# 赞成 -- 记录用户ID、更新数据库
 		if request.POST['type'] == 'agree':
-			r = redis_cache.sadd(rkey,uid)
+			r = redis_cache.zadd(rkey,uid,score)
 			if r :
 				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')+1)
 		# 取消赞成
@@ -116,9 +118,9 @@ def answer_save(request,qid):
 			# return error(['回答内容至少需要10个字符!'])
 			errmsg = {'content':{'msg':'回答内容至少需要10个字符!','value':content}}
 			return question(request,qid,errmsg)
-		import XssClean
+		from cicada.tool.XssClean import XssClean
 		ser_tag = settings.VALID_TAGS
-		xss = XssClean.XssClean(valid_tags = ser_tag)
+		xss = XssClean(valid_tags = ser_tag)
 		xss.feed(content)
 		answer.content = xss.clean_data
 		xss.close()
@@ -135,7 +137,9 @@ def question(request,qid,errmsg = []):
 	# 查找 answer 的支持者
 	for n in answer:
 		rkey = 'cacida.answer-%d-agree-uid' % n.id
-		uid = map(int,redis_cache.smembers(rkey))
+		uid = map(int,redis_cache.zrevrange(rkey,0,-1))
+		if request.user.id in uid:
+			n.agree = True
 		n.answers = User.objects.filter(id__in = uid).all()
 
 	if not qinfo:
@@ -152,7 +156,6 @@ def question_save(request):
 		# 3.如果topic不存在则添加topic
 		# 4.记录添加的topic的id
 		# 5.添加问题到question
-		
 		ques = Question()
 		ques.user_id = request.user.id
 		ques.title = strip_tags(request.POST['title']).strip('？?')+'？'
@@ -183,7 +186,6 @@ def question_save(request):
 				tp.save()
 				tobject.append(tp)
 		ques.save()
-
 		#添加question的topic到中间表(多对多插入)
 		for n in tobject:
 			ques._has_topic.add(n)
@@ -209,6 +211,4 @@ def profile(request,user):
 	if request.method == 'POST':
 		# handle_uploaded_file(request.FILES['avatar'],user)
 		handle_uploaded_file(request.FILES['Filedata'],user)
-		
-
 	return render_to_response('profile.html',{"request":request})

@@ -16,11 +16,12 @@ $('div.answer-total div.drop-menu').hover(function(){
 	$(this).removeClass('active')
 })
 $('div.answer-list a.agree').click(function(){
-	var aid = $(this).parents('div.item').attr('aid');
+	var aid = $(this).parents('div.item').attr('aid'),
+		_this = $(this);
 	$.post('/answer_vote/',
 		{"answer_id":aid,"type":"agree"},function(data){
 			if(data.success){
-				$(this).attr({'class':'cancel-agree','title':'取消赞同'})
+				_this.attr({'class':'cancel-agree','title':'取消赞同'})
 			}
 		},"json")
 	return false;

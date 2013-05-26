@@ -48,7 +48,7 @@ div#top
 		div.login-status
 			div.account
 				img(src='/static/images/no_avatar.jpg')
-				a(href='/profile/{{ request.user.username }}') {{ request.user.nickname }}
+				a(href='/profile/{{ request.user.id }}') {{ request.user.nickname }}
 			ul.acc-func.hide
 				li
 					a(href='#')
