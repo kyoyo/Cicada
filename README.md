@@ -1,4 +1,4 @@
-##使用python写的一个论坛程序
+##python--Django
 
 ###系统环境
  + Python >=2.7

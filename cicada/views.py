@@ -62,6 +62,26 @@ def topic_suggest(request):
 def topic_page(request,tid):
 	return HttpResponse(tid)
 
+#取得某个问题 回答的支持者(html)、支持者id
+def get_answer_agree_list(answer_id):
+
+	rkey = 'cacida.answer-%d-agree-uid' % answer_id
+	html = ''
+	ruid = redis_cache.zrevrange(rkey,0,-1)
+
+	uid = map(int,ruid)
+	answers = User.objects.filter(id__in=uid).extra(
+		select={'manual': 'FIELD(id,%s)' % ','.join(ruid)},
+		order_by=['manual']).all()
+
+	if answers :
+		html += ('%d 票，来自<span class="voters">' % len(answers))
+		for n in answers:
+			html += '<a href="/profile/%d/">%s</a>、' % (n.id,n.nickname.encode('utf-8'))
+		html = html.rstrip('、')
+		html += '</span>'
+	return html, uid
+
 @login_required(login_url='/auth/login')
 def answer_vote(request):
 	""" 赞成/反对 回答 """
@@ -70,18 +90,29 @@ def answer_vote(request):
 		from django.db.models import F
 		answer_id = int(request.POST['answer_id'])
 		rkey = 'cacida.answer-%d-agree-uid' % answer_id
+		r_oppose_key = 'cacida.answer-%d-oppose-uid' % answer_id
 		uid = request.user.id
 
 		import time
 		score = time.time()
-
+		affect_nums = 0
+		# 取消赞成
 		def cancel_agree():
+			global affect_nums
 			r = redis_cache.zrem(rkey,uid)
 			if r :
 				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')-1)
+		# 取消反对
+		def cancel_oppose():
+			global affect_nums
+			r = redis_cache.zrem(r_oppose_key,uid)
+			if r :
+				affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')-1)
 
 		# 赞成 -- 记录用户ID、更新数据库
 		if request.POST['type'] == 'agree':
+			# 如果有反对，先取消反对
+			cancel_oppose()
 			r = redis_cache.zadd(rkey,uid,score)
 			if r :
 				affect_nums = Answer.objects.filter(id=answer_id).update(vote_yes = F('vote_yes')+1)
@@ -91,19 +122,25 @@ def answer_vote(request):
 		# 反对 --- 如果已经赞同了，取消赞同
 		elif request.POST['type'] == 'oppose':
 			cancel_agree()
-			affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')+1)
-
+			r = redis_cache.zadd(r_oppose_key,uid,score)
+			if r :
+				affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')+1)
 		# 取消反对
 		elif request.POST['type'] == 'cancel-oppose':
-			affect_nums = Answer.objects.filter(id=answer_id).update(vote_no = F('vote_no')-1)
-		if affect_nums :
+			cancel_oppose()
+
+		if affect_nums >=0:
+			result['voters'] = get_answer_agree_list(answer_id)[0]
 			result['success'] = True
+
 	return HttpResponse(json.dumps(result))
 
 
 @login_required(login_url='/auth/login')
 def answer_save(request,qid):
 	if request.method=='POST':
+		# print request.POST['content']
+		# return HttpResponse('')
 		answer = Answer()
 		user = User()
 		user.id =  request.user.id
@@ -114,8 +151,7 @@ def answer_save(request,qid):
 
 		#去除xss，留下受信任的标签和属性
 		content = request.POST['content'].strip()
-		if len(content) < 10 :
-			# return error(['回答内容至少需要10个字符!'])
+		if len(strip_tags(content)) < 10 :
 			errmsg = {'content':{'msg':'回答内容至少需要10个字符!','value':content}}
 			return question(request,qid,errmsg)
 		from cicada.tool.XssClean import XssClean
@@ -132,18 +168,20 @@ def answer_save(request,qid):
 # 问题信息页
 def question(request,qid,errmsg = []):
 	qinfo = Question.objects.getQuestionById(qid)
-	qtopic = qinfo[0]._has_topic.all()
-	answer = Answer.objects.filter(question = qid).all()
-	# 查找 answer 的支持者
-	for n in answer:
-		rkey = 'cacida.answer-%d-agree-uid' % n.id
-		uid = map(int,redis_cache.zrevrange(rkey,0,-1))
-		if request.user.id in uid:
-			n.agree = True
-		n.answers = User.objects.filter(id__in = uid).all()
-
 	if not qinfo:
 		return HttpResponseRedirect('/')
+	qtopic = qinfo[0]._has_topic.all()
+	answer = Answer.objects.filter(question = qid).all()
+	user_id  = request.user.id
+	# 查找 answer 的支持者
+	for n in answer:
+		r_oppose_key = 'cacida.answer-%d-oppose-uid' % n.id
+		oppose_uid = redis_cache.zrank(r_oppose_key,user_id)
+		n.answers,agree_uid = get_answer_agree_list(n.id)
+		if user_id in agree_uid:
+			n.agree = True
+		if oppose_uid != None:
+			n.oppose = True
 	return render_to_response('question.html',{"qinfo":qinfo[0],"qtopic":qtopic,"errmsg":errmsg,"answer":answer},context_instance=RequestContext(request))
 
 
@@ -211,4 +249,5 @@ def profile(request,user):
 	if request.method == 'POST':
 		# handle_uploaded_file(request.FILES['avatar'],user)
 		handle_uploaded_file(request.FILES['Filedata'],user)
-	return render_to_response('profile.html',{"request":request})
+	item = {"image":"/uploads/test.jpg"}
+	return render_to_response('profile.html',{"request":request,"item":item})

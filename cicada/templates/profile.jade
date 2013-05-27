@@ -4,6 +4,7 @@ html
 		title {{request.user.nickname}}-个人中心
 	body
 		div.avatar
+			img(src="{{item.image}}")
 			form(method="post",action="",enctype="multipart/form-data")
 				//- img(src="")
 				//- a(href="#") 更改头像

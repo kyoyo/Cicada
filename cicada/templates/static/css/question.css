@@ -77,7 +77,7 @@ div.answer-list .item-vote a{
 	padding: 0px 2px;
 	border-radius: 3px;
 }
-div.answer-list .cancel-agree{
+div.answer-list .cancel-agree,div.answer-list .cancel-oppose{
 	background: #49afcd;
 }
 div.answer-list .item-user{

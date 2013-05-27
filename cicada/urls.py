@@ -8,8 +8,11 @@ from django.conf.urls import patterns, include, url
 # from cicada.admin.views import *
 # from cicada.admin import views
 import views
-
+import settings
 urlpatterns = patterns('',
+    (r'^uploads/(?P<path>.*)$', 'django.views.static.serve', {
+            'document_root': settings.MEDIA_ROOT,
+        }),
     # Examples:
     # url(r'^$', 'cicada.views.home', name='home'),
     # url(r'^cicada/', include('cicada.foo.urls')),
@@ -29,7 +32,6 @@ urlpatterns = patterns('',
     url(r'^answer_save/(\d+)/$',views.answer_save),
     (r'^answer_vote/$',views.answer_vote),
     (r'^profile/(\w*)$',views.profile),
-    
 )
 #后台管理
 urlpatterns += patterns(
