@@ -1,15 +1,27 @@
-$(pageInit);
+// $(pageInit);
 function submitForm(){
-	alert(1)
+	$('#commit-answer').submit()
 }
-function pageInit()
-{
+
+// function pageInit()
+// {
 	$.extend(xheditor.settings,{shortcuts:{'ctrl+enter':submitForm}});
-	$('div.emit-editor textarea.html-editor').xheditor({tools:'Bold,Italic,Underline,|,Blockquote,Code,OrderedList,UnorderedList,|,Img,Media,Record,|,Removeformat,Fullscreen,Markdown',
+	var editor = $('div.emit-editor textarea.html-editor').xheditor({tools:'Bold,Italic,Underline,|,Blockquote,Code,OrderedList,UnorderedList,|,Img,Media,Record,|,Removeformat,Fullscreen,Markdown',
 		"width":"608px",
-		"height":"143px"
+		"height":"143px",
+		"sourceMode":false,
+		"focus": checklogin,
+		// "blur":function(){
+		// 	alert(2)
+		// }
 		});
+// }
+function checklogin(){
+	if(login==false){
+		$('.login-dialog').modal()
+	}
 }
+
 $('div.answer-total div.drop-menu').hover(function(){
 	$(this).addClass('active')
 },function(){

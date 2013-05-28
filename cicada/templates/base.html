@@ -1,4 +1,35 @@
+<script>var login = {{user.is_authenticated|lower}},
+  csrf_token = '{{csrf_token}}'
+
+</script>
 <div id="top">
+  <div class="modal hide fade login-dialog">
+    <div class="modal-header">
+      <button data-dismiss="modal" aria-hidden="true" class="close">&times;</button>
+      <h3>登录</h3>
+    </div>
+    <div class="modal-body">
+      <form method="post" action="/auth/login/">
+        <table>
+          <tr>
+            <th>用户名:</th>
+            <td>
+              <input type="text" name="username"/>
+            </td>
+          </tr>
+          <tr>
+            <th>密码:</th>
+            <td>
+              <input type="password" name="password"/>{% csrf_token %}
+
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <div class="modal-footer"><a data-dismiss="modal" aria-hidden="true" class="btn close">取消</a><a onclick="$('.login-dialog form').submit()" class="btn btn-primary">登录</a>
+    </div>
+  </div>
   <div class="modal hide fade post-ques-dialog">
     <div class="modal-header">
       <button data-dismiss="modal" aria-hidden="true" class="close">&times;</button>
@@ -24,7 +55,8 @@
           <div class="q-header">
             <label>选择话题：</label><span class="tips">话题越精准，越容易让领域专业人士看到你的问题</span>
           </div>
-          <div class="qtopic-text"><input name="tags" id="tags" value="" />
+          <div class="qtopic-text">{% csrf_token %}
+<input name="tags" id="tags" value="" />
 
           </div>
         </div>
@@ -55,7 +87,8 @@
         </button>
       </form>
     </div>
-    <div class="login-status">
+    <div class="login-status">{% if user.is_authenticated %}
+
       <div class="account"><img src="/static/images/no_avatar.jpg"/><a href="/profile/{{ request.user.id }}">{{ request.user.nickname }}</a>
       </div>
       <ul class="acc-func hide">
@@ -70,7 +103,13 @@
         </li>
         <li><a href="/auth/logout"><i class="icon icon-white icon-off"></i>退出
 </a>
-        </li>
+        </li>{% else %}
+
+        <div class="login-btn"><a href="/auth/login/" class="btn btn-success"><i class="icon icon-user icon-white"></i>登录
+</a><a href="/auth/register/" class="btn btn-success"><i class="icon icon-white icon-heart"></i>注册
+</a>
+        </div>{% endif %}
+
       </ul>
     </div>
     <div class="tool-btn"><a class="btn btn-info show-cate"><i class="icon icon-white icon-th-list"></i>分类

@@ -30,6 +30,9 @@ address, blockquote, sup{
 	height: 48px;
 	margin:0px auto;
 }
+.login-dialog{
+	width: 320px;
+}
 .post-ques-dialog{
 	width: 552px;
 }
@@ -104,15 +107,19 @@ address, blockquote, sup{
 	margin-top: 8px;
 	margin-right: 3px;
 }
-.tool-btn a{
+div.tool-btn a,div.login-status .login-btn a{
 	margin-right: 6px;
 }
-.login-status{
+div.login-status{
 	width: 120px;
 	height: 45px;
 	float: right;
 	position: relative;
 	
+}
+div.login-status .login-btn{
+	width: 150px;
+	margin-top: 8px;
 }
 .login-status a{
 	color: #EEE

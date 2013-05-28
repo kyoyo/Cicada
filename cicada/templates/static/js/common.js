@@ -53,8 +53,9 @@ $('a.post-ques-btn').click(function(){
 		alert('请选择你要发表的话题');
 		return false;
 	}
+	csrf = $('input[name=csrfmiddlewaretoken]').val()
 	$.post('/question_save/',
-		{"title":title,"desc":desc,"topic":topic},
+		{"title":title,"desc":desc,"topic":topic,"csrfmiddlewaretoken":csrf},
 		function(data){
 			if(data.islogin==false){
 				alert("请登录后操作!!!")

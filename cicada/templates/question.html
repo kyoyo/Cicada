@@ -68,10 +68,14 @@
 还没有人回答该问题噢
 {% endfor %}
 
-          <div class="item-user"><a href="#" class="user">{{request.user.nickname}}</a><span>，这是我的个性签名</span><a href="#" class="avatar"><img src="/static/images/my_avatar.jpg"></a>
+          <div class="item-user">{% if user.is_authenticated %}
+<a href="#" class="user">{{request.user.nickname}}</a><span>，这是我的个性签名</span><a href="#" class="avatar"><img src="/static/images/my_avatar.jpg"></a>{% else %}
+我来回答
+{% endif %}
+
           </div>
         </div>
-        <form method="post" action="/answer_save/{{qinfo.id}}/#footer">
+        <form id="commit-answer" method="post" action="/answer_save/{{qinfo.id}}/#footer">
           <div class="emit-editor"><textarea name="content" class="html-editor">{{errmsg.content.value}}</textarea>
           </div>
           <div class="commit-answer"><span class="error">{{errmsg.content.msg}}</span>
@@ -80,7 +84,8 @@
               <input type="checkbox">匿名
 
             </label>
-          </div>
+          </div>{% csrf_token %}
+
         </form>
       </div>
       <div id="content-right"></div>{% include 'footer.html' %}

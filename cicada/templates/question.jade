@@ -95,11 +95,15 @@ html
 					还没有人回答该问题噢
 					{% endfor %}
 					div.item-user
+						{% if user.is_authenticated %}
 						a.user(href='#') {{request.user.nickname}}
 						span ，这是我的个性签名
 						a.avatar(href='#')
 							img(src='/static/images/my_avatar.jpg')
-				form(method='post',action='/answer_save/{{qinfo.id}}/#footer')
+						{% else %}
+						我来回答
+						{% endif %}
+				form#commit-answer(method='post',action='/answer_save/{{qinfo.id}}/#footer')
 					div.emit-editor
 						textarea.html-editor(name="content") {{errmsg.content.value}}
 					div.commit-answer
@@ -108,6 +112,7 @@ html
 						label.anonym
 							input(type='checkbox')
 							匿名
+					{% csrf_token %}
 			#content-right
 			{% include 'footer.html' %}
 		script(src='/static/plugins/xheditor/xheditor-1.1.14-zh-cn.js')

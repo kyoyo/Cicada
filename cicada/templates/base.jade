@@ -1,4 +1,27 @@
+script
+	var login = {{user.is_authenticated|lower}},
+			csrf_token = '{{csrf_token}}';
 div#top
+	div.modal.hide.fade.login-dialog
+		div.modal-header
+			button.close(data-dismiss='modal',aria-hidden='true') &times;
+			h3 登录
+		div.modal-body
+			form(method='post',action='/auth/login/')
+				table
+					tr
+						th 用户名:
+						td
+							input(type="text",name="username")
+					tr
+						th 密码:
+						td
+							input(type="password",name="password")
+							{% csrf_token %}
+		div.modal-footer
+			a.btn.close(data-dismiss='modal',aria-hidden='true') 取消
+			a.btn.btn-primary(onclick="$('.login-dialog form').submit()") 登录
+
 	div.modal.hide.fade.post-ques-dialog
 		div.modal-header
 			button.close(data-dismiss='modal',aria-hidden='true') &times;
@@ -20,6 +43,7 @@ div#top
 						span.tips 话题越精准，越容易让领域专业人士看到你的问题
 					div.qtopic-text
 						//- div.editor-div(contenteditable='true')
+						{% csrf_token %}
 						<input name="tags" id="tags" value="" />
 
 		div.modal-footer
@@ -46,6 +70,7 @@ div#top
 				button.sub-search(type='submit')
 					i.icon.icon-search
 		div.login-status
+			{% if user.is_authenticated %}
 			div.account
 				img(src='/static/images/no_avatar.jpg')
 				a(href='/profile/{{ request.user.id }}') {{ request.user.nickname }}
@@ -66,6 +91,15 @@ div#top
 					a(href='/auth/logout')
 						i.icon.icon-white.icon-off
 						退出
+				{% else %}
+				div.login-btn
+					a(href="/auth/login/").btn.btn-success
+						i.icon.icon-user.icon-white
+						登录
+					a(href="/auth/register/").btn.btn-success
+						i.icon.icon-white.icon-heart
+						注册
+				{% endif %}
 		div.tool-btn
 			a.btn.btn-info.show-cate
 				i.icon.icon-white.icon-th-list

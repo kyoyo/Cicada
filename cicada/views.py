@@ -31,9 +31,9 @@ def error(msg = [],time = 3, url = ''):
 # print request.session['_auth_user_id']
 # request.session['username'] = request.user.username
 
-@login_required(login_url='/auth/login')
+# @login_required(login_url='/auth/login')
 def index(request):
-	return render_to_response('index.html',{"test":"test","request":request})
+	return render_to_response('index.html',{"test":"test"},context_instance=RequestContext(request))
 
 #用户注册
 def register(request):
@@ -139,8 +139,6 @@ def answer_vote(request):
 @login_required(login_url='/auth/login')
 def answer_save(request,qid):
 	if request.method=='POST':
-		# print request.POST['content']
-		# return HttpResponse('')
 		answer = Answer()
 		user = User()
 		user.id =  request.user.id
@@ -196,7 +194,7 @@ def question_save(request):
 		# 5.添加问题到question
 		ques = Question()
 		ques.user_id = request.user.id
-		ques.title = strip_tags(request.POST['title']).strip('？?')+'？'
+		ques.title = strip_tags(request.POST['title']).strip(u'？?')+u'？'
 		ques.desc = markdown.markdown(strip_tags(request.POST['desc']))
 		topic_l = strip_tags(request.POST['topic']).split(',')
 

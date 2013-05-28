@@ -430,6 +430,10 @@ var xheditor=function(textarea,options)
 		_jWin.scrollTop(bookmark.top);
 		bookmark=null;
 	}
+	this.blur=function(){
+		_jWin.blur()
+		return false;
+	}
 	this.focus=function()
 	{
 		if(!bSource)_win.focus();
@@ -1946,14 +1950,16 @@ var xheditor=function(textarea,options)
 				// 	_this.pasteHTML('<blockquote>'+_this.getSelect()+'</blockquote>')
 				// 	break;
 				case 'markdown':
-					if($(_text).next().val()==''){
-						html = $('#xhe0_iframearea').html()
-						$(_text).after('<input type="hidden" name="is_markdown" value="true" />')
-						$('#xhe0_iframearea').html('<textarea name="'+$(_text).attr('name')+'" id="xhe0_iframe"></textarea>')
-					}else{
-						$('#xhe0_iframearea').html(html)
-						$(_text).next().remove()
-					}
+					// if($(_text).next().val()==''){
+					// 	html = $('#xhe0_iframearea').html()
+					// 	$(_text).after('<input type="hidden" name="is_markdown" value="true" />')
+					// 	$('#xhe0_iframearea').html('<textarea name="'+$(_text).attr('name')+'" id="xhe0_iframe"></textarea>')
+					// }else{
+					// 	$('#xhe0_iframearea').html(html)
+					// 	$(_text).next().remove()
+					// }
+					// alert(settings.sourceMode)
+					settings.sourceMode = true
 					break;
 				case 'cut':
 					try{_doc.execCommand(cmd);if(!_doc.queryCommandSupported(cmd))throw 'Error';}
