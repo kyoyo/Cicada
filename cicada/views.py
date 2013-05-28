@@ -39,7 +39,6 @@ def index(request):
 def register(request):
 	if request.user.is_authenticated():
 		return HttpResponseRedirect("/")
-
 	from django.contrib.auth.forms import *
 	form = UserCreationForm()
 	if request.method == 'GET':

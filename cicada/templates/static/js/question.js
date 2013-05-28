@@ -33,7 +33,7 @@ $('div.item-vote a').click(function(){
 		_type = _this.attr('class'),
 		v = _this.parent().siblings('div.item-vote-info');
 	$.post('/answer_vote/',
-		{"answer_id":aid,"type":_type},function(data){
+		{"answer_id":aid,"type":_type,"csrfmiddlewaretoken":csrf_token},function(data){
 			if(data.success){
 				if(_type == 'agree'){
 					_this.next().attr('class','oppose')
