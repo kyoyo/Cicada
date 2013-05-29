@@ -113,7 +113,9 @@ html
 							input(type='checkbox')
 							匿名
 					{% csrf_token %}
+				div#recorder-flash
 			#content-right
 			{% include 'footer.html' %}
+		script(src='/static/plugins/jRecorder/jRecorder.js')
 		script(src='/static/plugins/xheditor/xheditor-1.1.14-zh-cn.js')
 		script(src='/static/js/question.js')

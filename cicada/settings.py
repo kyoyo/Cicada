@@ -4,7 +4,7 @@ ROOT_PATH = os.path.dirname(__file__)
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-VALID_TAGS = {"strong":[],"ol":[],"li":[],"ul":[],"u":[],"em":[],"img":["src","title"],"blockquote":[],"a":["href"],"p":[],"span":[]}
+VALID_TAGS = {"strong":[],"ol":[],"li":[],"ul":[],"u":[],"em":[],"img":["src","title"],"blockquote":[],"a":["href"],"p":[],"span":[],"audio":["controls"],"source":["src","type"]}
 
 
 ADMINS = (

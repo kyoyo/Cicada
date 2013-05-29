@@ -7,12 +7,15 @@
     <link type="text/css" href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
     <script type="text/javascript" src="/static/js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/static/plugins/jRecorder/jRecorder.js"></script>
 </head>
 <body>
-	<a href="#" class="btn btn-large btn-danger">Click to toggle popover</a>	
+	<a href="#" id="pop" class="btn btn-large btn-danger">Click to toggle popover</a>
+	<a href="###" id="start">start</a>
+	<a href="###" id="stop">stop</a>
 	<div></div>
 	<script>
-		$('a').hover(function(){
+		$('#pop').hover(function(){
 			if($(this).find('div.popover').length == 0){
 				$(this).popover({html:true,placement:"bottom",
 					content:'来我们来测试一下Html代码<a href="###">aaaa</a>',
@@ -26,6 +29,54 @@
 			// $(this).popover('hide')
 			$(this).children('div.popover').fadeOut()
 		})
+    $.jRecorder({
+      host : '/recorder_save/' ,
+      callback_started_recording:function(){callback_started(); },
+      callback_stopped_recording:function(){callback_stopped(); },
+      callback_activityLevel:function(level){callback_activityLevel(level); },
+      callback_activityTime:function(time){callback_activityTime(time); },
+
+      callback_finished_sending:function(data){ callback_finished_sending(data) },
+      swf_path : '/static/plugins/jRecorder/jRecorder2.swf',
+    });
+
+      $('#start').click(function(){
+        $.jRecorder.record(130)
+        return false;
+      })
+      $('#stop').click(function(){
+        $.jRecorder.stop();
+        return false;
+      })
+      $('#play').click(function(){
+        $.jRecorder.play();
+        return false;
+      })
+      $('#send').click(function(){
+        $.jRecorder.sendData();
+        return false;
+      })
+      function callback_activityLevel(level){
+         $('#level').html(level);
+        if(level == -1){
+          $('#level').css("width",  "2px");
+        }else{
+          $('#level').css("width", (level * 2)+ "px");
+        }
+      }
+      function callback_started(){
+        $('#status').html('Recording is started');
+      }
+      function callback_finished(){
+        $('#status').html('Recording is finished');
+      }
+      function callback_activityTime(time){
+        $('#time').html(time)
+      }
+      function callback_finished_sending(data){
+        alert(data)
+        $('#status').html('File has been sent to server mentioned as host parameter');
+      }      
 	</script>
 </body>
 </html>

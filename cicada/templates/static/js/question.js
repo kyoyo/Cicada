@@ -1,20 +1,10 @@
-// $(pageInit);
-function submitForm(){
-	$('#commit-answer').submit()
-}
-
-// function pageInit()
-// {
-	$.extend(xheditor.settings,{shortcuts:{'ctrl+enter':submitForm}});
-	var editor = $('div.emit-editor textarea.html-editor').xheditor({tools:'Bold,Italic,Underline,|,Blockquote,Code,OrderedList,UnorderedList,|,Img,Media,Record,|,Removeformat,Fullscreen,Markdown',
-		"width":"608px",
-		"height":"143px",
-		"sourceMode":false,
-		"focus": checklogin,
-		// "blur":function(){
-		// 	alert(2)
-		// }
-		});
+$.extend(xheditor.settings,{shortcuts:{'ctrl+enter':function(){$('#commit-answer').submit()}}});
+var editor = $('div.emit-editor textarea.html-editor').xheditor({tools:'Bold,Italic,Underline,|,Blockquote,Code,OrderedList,UnorderedList,|,Img,Media,Record,|,Removeformat,Fullscreen,Markdown',
+	"width":"608px",
+	"height":"143px",
+	"sourceMode":false,
+	"focus": checklogin,
+	});
 // }
 function checklogin(){
 	if(login==false){
@@ -53,3 +43,57 @@ $('div.item-vote a').click(function(){
 		},"json")
 	return false;
 })
+$.jRecorder({
+		host : '/recorder_save/',
+		'rec_top': '0px',
+		'rec_left': '0px',
+		callback_started_recording:function(){callback_started(); },
+		callback_stopped_recording:function(){callback_stopped(); },
+		callback_activityLevel:function(level){callback_activityLevel(level); },
+		callback_activityTime:function(time){callback_activityTime(time); },
+
+		callback_finished_sending:function(data){ callback_finished_sending(data) },
+		swf_path : '/static/plugins/jRecorder/jRecorder2.swf',
+});
+$('div.record-btn a.start-recording').live('click',function(e){
+	x =e.pageX-150+'px'
+	y = e.pageY-220+'px'
+	$('#flashrecarea').css({'top':y,'left':x})
+	start_recorder()
+	return false
+})
+function start_recorder(){
+	$.jRecorder.record(130)
+	return false;
+}
+function stop_recorder(){
+	// $('#start').click(function(){
+	// 	$.jRecorder.record(130)
+	// 	return false;
+	// })
+	$.jRecorder.stop();
+	$.jRecorder.sendData();
+	return false;
+}
+function callback_activityLevel(level){
+ 	$('#level').html(level);
+	if(level == -1){
+	  $('#level').css("width",  "2px");
+	}else{
+	  $('#level').css("width", (level * 2)+ "px");
+	}
+}
+function callback_started(){
+	$('#status').html('Recording is started');
+}
+function callback_finished(){
+	$('#status').html('Recording is finished');
+}
+function callback_activityTime(time){
+	$('#time').html(time)
+}
+function callback_finished_sending(data){
+	eval('data = '+data)
+	editor.pasteHTML('<audio controls><source src="'+data.path+'" type="audio/mpeg">不支持</audio>')
+	$('#status').html('File has been sent to server mentioned as host parameter');
+}

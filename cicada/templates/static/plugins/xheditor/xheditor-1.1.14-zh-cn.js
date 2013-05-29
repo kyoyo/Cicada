@@ -1949,6 +1949,10 @@ var xheditor=function(textarea,options)
 				// case 'blockquote':
 				// 	_this.pasteHTML('<blockquote>'+_this.getSelect()+'</blockquote>')
 				// 	break;
+				case 'record':
+					_this.showPanel('<div class="record-btn"><a href="#" class="start-recording">开始录制</a><a href="#" onclick="javascript:return stop_recorder();">结束录制</a></div>')
+					// $.jRecorder.record(130)
+					break;
 				case 'markdown':
 					// if($(_text).next().val()==''){
 					// 	html = $('#xhe0_iframearea').html()

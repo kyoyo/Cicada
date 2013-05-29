@@ -69,8 +69,8 @@ $('a.post-ques-btn').click(function(){
 	)
 	return false
 });
-$('div..comment-bar').hover(function(){
-	$(this).children('a.hide').fadeIn(200)
+$('div.answer-list div.item').hover(function(){
+	$(this).children('div.comment-bar').find('a.hide').fadeIn(200)
 },function(){
-	$(this).children('a.hide').fadeOut(200)
+	$(this).children('div.comment-bar').find('a.hide').fadeOut(200)
 })

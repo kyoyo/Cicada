@@ -3,12 +3,14 @@
 import json
 import hashlib
 import random
+import time
 
 # django lib
 from django.http import HttpRequest,HttpResponse,HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from django.utils.html import strip_tags,escape
 from django.conf import settings
@@ -21,8 +23,15 @@ import redis
 from cicada.models import *
 from contrib.auth.models import User
 
-
 redis_cache = redis.Redis(host='localhost', port=6379, db=0)
+
+def random_name(username = None):
+	sauce = '!@#$%^&*()_+~Z'
+	username = 'django_cicada'+str(random.randint(0,1000)) if username == None else username
+	stri = '%f %s %d)' % (time.time(),username,random.randint(0,1000))
+	sauce_s = sauce[random.randint(0,len(sauce)-1)]
+	filename = hashlib.md5(stri).hexdigest()[:10]+sauce_s
+	return filename
 
 def error(msg = [],time = 3, url = ''):
 	return render_to_response('error.html',{"msg":msg,"time":time,"url":url})
@@ -91,8 +100,6 @@ def answer_vote(request):
 		rkey = 'cacida.answer-%d-agree-uid' % answer_id
 		r_oppose_key = 'cacida.answer-%d-oppose-uid' % answer_id
 		uid = request.user.id
-
-		import time
 		score = time.time()
 		affect_nums = 0
 		# 取消赞成
@@ -134,6 +141,21 @@ def answer_vote(request):
 
 	return HttpResponse(json.dumps(result))
 
+@login_required(login_url='/auth/login')
+@csrf_exempt
+def recorder_save(request):
+	import os
+	result = {"path":''}
+	record = request.body
+	filename = random_name(request.user.username)
+	wav = 'uploads/recorder/'+filename+'.wav'
+	f = open(wav,'w+')
+	f.write(record)
+	f.close()
+	mp3 = 'uploads/recorder/'+filename+'.mp3'
+	os.system("lame %s %s" % (wav,mp3))
+	result['path'] = '/'+ mp3
+	return HttpResponse(json.dumps(result))
 
 @login_required(login_url='/auth/login')
 def answer_save(request,qid):

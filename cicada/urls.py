@@ -31,7 +31,8 @@ urlpatterns = patterns('',
     (r'^question_save/$',views.question_save),
     (r'^topic/(\d+)/$',views.topic_page),
     url(r'^answer_save/(\d+)/$',views.answer_save),
-    (r'^answer_vote/$',views.answer_vote),
+    (r'^answer_vote/',views.answer_vote),
+    (r'^recorder_save/$',views.recorder_save),
     (r'^profile/(\w*)$',views.profile),
 )
 #后台管理
