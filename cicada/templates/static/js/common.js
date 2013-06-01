@@ -74,3 +74,57 @@ $('div.answer-list div.item').hover(function(){
 },function(){
 	$(this).children('div.comment-bar').find('a.hide').fadeOut(200)
 })
+$(window).scroll(function(){
+	if($('div.notify').is(':visible')){
+		var notify_top = $(window).scrollTop();
+		if(notify_top < 47){
+			notify_top = 46
+		}
+		$('div.notify').stop()
+		$('div.notify').animate({'top':notify_top+'px'},300)
+	}
+})
+// 默认获取消息的间隔时间
+var notify_timeout = 10000
+$('div.notify a.close-notify').click(function(){
+	$('div.notify').slideUp()
+	notify_timeout = 600000
+	return false;
+});
+var poll_notify = {
+	poll: function(){
+		$.ajax({
+			url: "/poll", 
+			type: "POST", 
+			dataType: "json",
+			data:{"csrfmiddlewaretoken":csrf_token},
+			success: poll_notify.onSuccess,
+			error: poll_notify.onError
+		});
+	},
+	onSuccess: function(data, dataStatus){
+		var show_notify = false
+		try{
+			if(data.at){
+				show_notify = true
+				$("div.notify div.notify-at").html(data.at+"<br>");
+			}
+			if(show_notify){
+				$("div.notify").fadeIn(300,function(){
+					$(window).scroll()
+				})
+			}else{
+				$("div.notify").fadeOut(300)
+			}
+		}
+		catch(e){
+			poll_notify.onError();
+			return;
+		}
+		interval = window.setTimeout(poll_notify.poll, notify_timeout);
+	},
+	onError: function(){
+		console.log("Poll error;");
+	}
+};
+setTimeout(poll_notify.poll,10000);

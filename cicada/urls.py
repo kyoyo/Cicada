@@ -34,6 +34,9 @@ urlpatterns = patterns('',
     (r'^answer_vote/',views.answer_vote),
     (r'^recorder_save/$',views.recorder_save),
     (r'^profile/(\w*)/$',views.profile),
+    # (r'^poll$',views.LongPollingHandler().post()),
+    (r'^poll$',views.notify),
+    
 )
 #后台管理
 urlpatterns += patterns(

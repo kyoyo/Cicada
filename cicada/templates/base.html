@@ -1,5 +1,5 @@
 <script>var login = {{user.is_authenticated|lower}},
-  csrf_token = '{{csrf_token}}'
+  csrf_token = '{{csrf_token}}';
 
 </script>
 <div id="top">
@@ -86,6 +86,9 @@
         <button type="submit" class="sub-search"><i class="icon icon-search"></i>
         </button>
       </form>
+    </div>
+    <div class="notify"><a href="###" class="close-notify">&times;</a>
+      <div class="notify-at"></div>
     </div>
     <div class="login-status">{% if user.is_authenticated %}
 

@@ -29,6 +29,7 @@ address, blockquote, sup{
 	width:960px;
 	height: 48px;
 	margin:0px auto;
+	position: relative;
 }
 .login-dialog{
 	width: 320px;
@@ -116,6 +117,30 @@ div.login-status{
 	float: right;
 	position: relative;
 	
+}
+div.notify{
+	display: none;
+	padding: 2px 20px 5px 5px;
+	position: absolute;
+	background: #FFF;
+	top: 46px;
+	right: 0px;
+	z-index: 99;
+	border-width: 0px 1px 1px;
+	border-color: #999;
+	border-style: solid;	
+}
+div.notify a.close-notify{
+	position: absolute;
+	right: -1px;
+	padding: 0px 4px;
+	line-height: 15px;
+	background: #F60;
+	color: #FFF;
+	top:0px;
+}
+div.notify a.close-notify:hover{
+	text-decoration: none;
 }
 div.login-status .login-btn{
 	width: 150px;

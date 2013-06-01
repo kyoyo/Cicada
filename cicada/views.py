@@ -181,16 +181,21 @@ def recorder_save(request):
     return HttpResponse(json.dumps(result))
 def at_user(content):
     regular = re.compile('(@.+?)(?=\s|？|、|！|，|。|：|\?|!|,|\.|$)')
+    # (@.+?)(?=\s|？|、|！|，|。|：|\?|!|,|\.|$)
+    r = regular.findall(content)
+    uid = []
     def call_replace(m):
         name = m.group()
         try:
             u = User.objects.get(nickname = name[1:])
             url = '/profile/%d/' % u.id
+            uid.append(u.id)
         except User.DoesNotExist:
             url = '#'
         return '<a href="%s">%s</a>' % (url,name)
     content = regular.sub(call_replace,content)
-    return content
+    # 返回替换后的内容和@到的用户ID
+    return content,set(uid)
 
 @login_required(login_url='/auth/login')
 def answer_save(request, qid):
@@ -214,9 +219,12 @@ def answer_save(request, qid):
         xss.feed(content)
         answer.content = xss.clean_data
         # 为@到的用户替换超链接和写入到redis中，提醒谁@到了
-        answer.content = at_user(answer.content)
+        answer.content, at_uid = at_user(answer.content.encode('utf-8'))
         xss.close()
         answer.save()
+        for uid in at_uid :
+            at_user_key = 'cacida.answer-at-user-%d' % uid
+            redis_cache.lpush(at_user_key,answer.id)
         if answer.id:
             return HttpResponseRedirect('/question/' + qid)
     return HttpResponseRedirect('/question/' + qid)
@@ -313,3 +321,11 @@ def profile(request, user):
         handle_uploaded_file(request.FILES['Filedata'], user)
     item = {"image": "/uploads/test.jpg"}
     return render_to_response('profile.html', {"request": request, "item": item})
+
+def notify(request):
+    result = {'at':False}
+    uid = request.user.id
+    at_rkey = 'cacida.answer-at-user-%d' % uid
+    at_nums = redis_cache.llen(at_rkey)
+    result['at'] = '%d 条新@，<a href="">查看@</a>' % at_nums
+    return HttpResponse(json.dumps(result))
